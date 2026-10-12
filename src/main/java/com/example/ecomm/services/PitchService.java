@@ -35,10 +35,12 @@ public class PitchService {
 
     public String generatePitch(Product product) {
         try {
+            // Request Headers
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(apiKey);
             headers.setContentType(MediaType.APPLICATION_JSON);
 
+            // Request Body
             Map<String, Object> body = Map.of(
                     "model", MODEL,
                     "reasoning_effort", "low",
