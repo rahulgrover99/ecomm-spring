@@ -21,7 +21,7 @@ public class Main {
                 Product product = new Product();
                 product.setId(rs.getLong("id"));
                 product.setName(rs.getString("name"));
-                product.setPrice(rs.getDouble("price"));
+                product.setPrice(rs.getBigDecimal("price"));
                 System.out.println(product.getName() + " costs " + product.getPrice());
             }
         } catch (Exception e) {

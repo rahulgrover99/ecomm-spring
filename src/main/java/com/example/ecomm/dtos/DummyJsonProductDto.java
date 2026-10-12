@@ -3,6 +3,8 @@ package com.example.ecomm.dtos;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 /**
  * {
  *     "id": 10,
@@ -76,7 +78,7 @@ public class DummyJsonProductDto {
     private Long id;
     private String title;
     private String description;
-    private Double price;
+    private BigDecimal price;
     private String category;
     private String thumbnail;
 }
