@@ -42,6 +42,7 @@ public class DummyJsonProductService implements IProductService{
                 .id(dummyJsonProductDto.getId())
                 .description(dummyJsonProductDto.getDescription())
                 .imageUrl(dummyJsonProductDto.getThumbnail())
+                .price(dummyJsonProductDto.getPrice())
                 .name(dummyJsonProductDto.getTitle());
 
         Category category = new Category();

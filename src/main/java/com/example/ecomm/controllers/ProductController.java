@@ -3,23 +3,25 @@ package com.example.ecomm.controllers;
 
 import com.example.ecomm.dtos.CategoryDto;
 import com.example.ecomm.dtos.ProductDto;
+import com.example.ecomm.dtos.ProductPitchDto;
 import com.example.ecomm.models.Product;
 import com.example.ecomm.services.IProductService;
+import com.example.ecomm.services.PitchService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
 public class ProductController {
     private final IProductService iProductService;
+    private final PitchService pitchService;
 
 
-    public ProductController(IProductService iProductService) {
+    public ProductController(IProductService iProductService, PitchService pitchService) {
         this.iProductService = iProductService;
+        this.pitchService = pitchService;
     }
 
     @GetMapping("/products/{id}")
@@ -30,6 +32,23 @@ public class ProductController {
         }
         return new ResponseEntity<>(from(product), HttpStatus.OK);
 
+    }
+
+    @GetMapping("/products/{id}/pitch")
+    public ResponseEntity<ProductPitchDto> getProductPitch(@PathVariable("id") Long id) {
+        if (id < 1) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Product product = iProductService.getProductById(id);
+        if (product == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        ProductPitchDto pitchDto = new ProductPitchDto();
+        pitchDto.setProductId(product.getId());
+        pitchDto.setNotification(pitchService.generatePitch(product));
+        return ResponseEntity.ok(pitchDto);
     }
 
     private ProductDto from(Product product) {
