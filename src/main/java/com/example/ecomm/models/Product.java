@@ -11,10 +11,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Product {
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Product extends BaseModel{
+
     private String name;
     private String description;
     @Column(precision = 10, scale = 2)

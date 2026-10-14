@@ -9,9 +9,6 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-public class Category {
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Category extends BaseModel {
     private String name;
 }

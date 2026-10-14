@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.MethodNotAllowedException;
+
+import java.util.List;
 
 @Service
 public class DummyJsonProductService implements IProductService{
@@ -36,10 +39,19 @@ public class DummyJsonProductService implements IProductService{
 
     }
 
+    @Override
+    public List<Product> getAllProducts() {
+        return List.of();
+    }
+
+    @Override
+    public Product createProduct(Product product) {
+        throw new IllegalStateException("Creation denied");
+    }
+
 
     private Product from(DummyJsonProductDto dummyJsonProductDto) {
         Product.ProductBuilder product = Product.builder()
-                .id(dummyJsonProductDto.getId())
                 .description(dummyJsonProductDto.getDescription())
                 .imageUrl(dummyJsonProductDto.getThumbnail())
                 .price(dummyJsonProductDto.getPrice())
