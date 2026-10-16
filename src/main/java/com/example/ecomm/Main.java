@@ -11,22 +11,22 @@ import java.sql.ResultSet;
 public class Main {
 
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/productcatalogservice";
-        try (Connection con = DriverManager.getConnection(url, "root", "rahul999");
-             PreparedStatement ps = con.prepareStatement(
-                     "SELECT id, name, price FROM demo_product WHERE id = ?")) {
-            ps.setLong(1, 1);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getLong("id"));
-                product.setName(rs.getString("name"));
-                product.setPrice(rs.getBigDecimal("price"));
-                System.out.println(product.getName() + " costs " + product.getPrice());
-            }
-        } catch (Exception e) {
-            System.out.println(e.getStackTrace());
+        // Arrange
+        int[] shelf = {10, 20, 30};
+
+
+        // Act
+        if (ArrayUtil.getElementByIndex(shelf, 1) == 20) {
+            System.out.println("PASS: middle slot"); // assert
+        } else {
+            System.out.println("FAIL: middle slot");
         }
 
+        try {
+            ArrayUtil.getElementByIndex(shelf, 3);
+            System.out.println("FAIL: slot 3 should be refused");
+        } catch (IllegalArgumentException e) {
+            System.out.println("PASS: slot 3 refused");
+        }
     }
 }

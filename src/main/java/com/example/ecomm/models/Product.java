@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(indexes = @Index(name = "idx_col_category", columnList = "category_id"))
 public class Product extends BaseModel{
 
     private String name;
