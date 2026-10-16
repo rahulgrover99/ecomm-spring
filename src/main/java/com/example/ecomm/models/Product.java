@@ -18,6 +18,6 @@ public class Product extends BaseModel{
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
     private String imageUrl;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 }

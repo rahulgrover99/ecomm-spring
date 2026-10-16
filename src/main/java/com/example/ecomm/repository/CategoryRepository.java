@@ -11,12 +11,5 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-
-    @Query(
-            value = "SELECT c.name FROM Category c WHERE c.id = :id", nativeQuery = true
-    )
-    Optional<String> findNameByID(Long id);
-
-    List<Category> findAll();
-    Optional<Category> findByNameMatches(String s);
+    Optional<Category> findByName(String name);
 }
