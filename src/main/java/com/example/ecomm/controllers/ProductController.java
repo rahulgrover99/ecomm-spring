@@ -1,10 +1,9 @@
 package com.example.ecomm.controllers;
 
 
-import com.example.ecomm.dtos.CategoryDto;
 import com.example.ecomm.dtos.ProductDto;
 import com.example.ecomm.dtos.ProductPitchDto;
-import com.example.ecomm.models.Category;
+import com.example.ecomm.mappers.ProductMapper;
 import com.example.ecomm.models.Product;
 import com.example.ecomm.services.IProductService;
 import com.example.ecomm.services.PitchService;
@@ -22,13 +21,16 @@ public class ProductController {
     private final IProductService productService;
     private final IProductService supplierService;
     private final PitchService pitchService;
+    private final ProductMapper productMapper;
 
     public ProductController(@Qualifier("storageProductService") IProductService productService,
                              @Qualifier("dummyJsonProductService") IProductService supplierService,
-                             PitchService pitchService) {
+                             PitchService pitchService,
+                             ProductMapper productMapper) {
         this.productService = productService;
         this.supplierService = supplierService;
         this.pitchService = pitchService;
+        this.productMapper = productMapper;
     }
 
     @GetMapping("/products")
@@ -36,7 +38,7 @@ public class ProductController {
                                                            @RequestParam(required = false) BigDecimal maxPrice,
                                                            Pageable pageable) {
         List<ProductDto> products = productService.getAllProducts(minPrice, maxPrice, pageable).stream()
-                .map(this::from)
+                .map(productMapper::toDto)
                 .toList();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
@@ -47,23 +49,23 @@ public class ProductController {
         if (product == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(from(product), HttpStatus.OK);
+        return new ResponseEntity<>(productMapper.toDto(product), HttpStatus.OK);
     }
 
     @PostMapping("/products")
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
-        Product created = productService.createProduct(from(productDto));
-        return new ResponseEntity<>(from(created), HttpStatus.CREATED);
+        Product created = productService.createProduct(productMapper.toEntity(productDto));
+        return new ResponseEntity<>(productMapper.toDto(created), HttpStatus.CREATED);
     }
 
     @PutMapping("/products/{id}")
     public ResponseEntity<ProductDto> replaceProduct(@PathVariable("id") Long id,
                                                      @RequestBody ProductDto productDto) {
-        Product replaced = productService.replaceProduct(from(productDto), id);
+        Product replaced = productService.replaceProduct(productMapper.toEntity(productDto), id);
         if (replaced == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(from(replaced), HttpStatus.OK);
+        return new ResponseEntity<>(productMapper.toDto(replaced), HttpStatus.OK);
     }
 
     @DeleteMapping("/products/{id}")
@@ -101,40 +103,5 @@ public class ProductController {
         pitchDto.setProductId(product.getId());
         pitchDto.setNotification(pitchService.generatePitch(product));
         return ResponseEntity.ok(pitchDto);
-    }
-
-    private ProductDto from(Product product) {
-        ProductDto.ProductDtoBuilder
-                dto = ProductDto.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .imageUrl(product.getImageUrl())
-                .price(product.getPrice());
-
-        if (product.getCategory() != null) {
-            CategoryDto categoryDto = new CategoryDto();
-            categoryDto.setName(product.getCategory().getName());
-            categoryDto.setDescription(product.getCategory().getDescription());
-            dto.category(categoryDto);
-        }
-        return dto.build();
-    }
-
-    private Product from(ProductDto dto) {
-        Product product = new Product();
-        product.setId(dto.getId());
-        product.setName(dto.getName());
-        product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
-        product.setImageUrl(dto.getImageUrl());
-
-        if (dto.getCategory() != null) {
-            Category category = new Category();
-            category.setName(dto.getCategory().getName());
-            category.setDescription(dto.getCategory().getDescription());
-            product.setCategory(category);
-        }
-        return product;
     }
 }
